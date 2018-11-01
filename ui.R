@@ -24,7 +24,7 @@ ui <- dashboardPage(skin = "blue",
           column(width = 6, br(), selectInput("listStock", label = "Select a symbol", "")),
           column(width = 6, br(), sliderInput("performStock", "Performance of the last x months", value = 3, min = 1, max = 48))
         ),
-        tabBox(width = NULL, title = "Positions Information",
+        tabBox(width = NULL, title = paste0("Portfolio Beta: ", round(portfolioBeta, 2), " / Positions Information"),
           tabPanel("Overview", dataTableOutput("listPortfolio")),
           tabPanel("Chart", plotOutput("repartitionChart")),
           tabPanel("Balance", fluidRow(
@@ -45,10 +45,19 @@ ui <- dashboardPage(skin = "blue",
           # The limit 100 is abritary picked as we need to pre generate the portfolio 
           sliderInput("numStock", "Portfolio size", value = 50, min = 1, max = 300),
           # Choose risks with Beta
-          strong(paste("Risk (Beta) per Stocks")),
+          strong(paste("(Risk) Beta per Stocks")),
+          br(),
           column(width = 6, selectInput("methodBeta", "", choices = c("Max" = "max", "Min" = "min"), selected = "max")),
           column(width = 6, numericInput(inputId = "beta", "", value = 1, step = 0.1)),
+          br(),
+          strong(paste("Portfolio Beta")),
+          # Add portfolio Beta
+          column(width = 6, numericInput(inputId = "pBeta", "", value = 0, step = 0.1)),
           p(class = "text-muted",
+            paste("Warning: if different than 0, the Portfolio beta will be used for the portfolio generation instead of the separate stock.")
+          ),
+          br(),
+           p(class = "text-muted",
             paste("Beta is a measure of the volatility of the stock in comparison to the market as a whole.")
           ),
           # Choose valuation index with RSI

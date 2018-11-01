@@ -21,8 +21,8 @@ server <- function(input, output, session) {
   names(balance) <- c("Money Invested", "Money Left", "Money Lost")
   
   # Create a setting variable for updating stocks
-  settings <- vector(mode = "character", length = 6)
-  names(settings) <- c("beta", "methodBeta", "RangeReturn", "fees", "RSI", "methodOfInvestment")
+  settings <- vector(mode = "character", length = 7)
+  names(settings) <- c("beta", "methodBeta", "RangeReturn", "fees", "RSI", "methodOfInvestment", "pBeta")
   
   # Create reactive value for update
   rv <- reactiveValues(portfolio = portfolio, stocks = stocks, betalist = betalist, balance = balance, settings = settings, lastMarket = lastMarket)
@@ -48,7 +48,7 @@ server <- function(input, output, session) {
       # rv$portfolio <- createPortfolio(input = rv$stocks, inputBeta = rv$betalist, methodBeta = input$methodBeta, numMoney = input$amountMoney, numberOfStock = input$numStock, amountOfRisk = input$beta, fees = input$fees, rangeReturn = input$rangeReturn, rsi = c(0, input$riskRSI), methodOfInvestment = input$methodOfInvestment)
       rv$portfolioBeta <- portfolioBeta
       # Save settings
-      rv$settings <- c(input$beta, input$methodBeta, input$rangeReturn, input$fees, input$riskRSI, input$methodOfInvestment)
+      rv$settings <- c(input$beta, input$methodBeta, input$rangeReturn, input$fees, input$riskRSI, input$methodOfInvestment, input$pBeta)
       # Send message about money invested
       output$messageMenu <- renderMenu({
         dropdownMenu(type = "messages", 

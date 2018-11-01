@@ -217,7 +217,7 @@ createPortfolio <- function(input, inputBeta, methodBeta, numMoney, numberOfStoc
   portfolio$Amount <- as.numeric(portfolio$Amount)
   
   # Generate portfolio beta
-  portfolioBeta <<- mean(portfolioBeta * portfolio$Amount)
+  portfolioBeta <<- mean(portfolioBeta * portfolio$Amount/sum(portfolio$Amount))
   
   return(portfolio)
 }
