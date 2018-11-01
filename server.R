@@ -45,7 +45,7 @@ server <- function(input, output, session) {
         rv$stocks[[2]] <- calculateRSI(rv$stocks[[2]])
       }
       incProgress(2/10, detail = "Preparing your portfolio")
-      # rv$portfolio <- createPortfolio(input = rv$stocks, inputBeta = rv$betalist, methodBeta = input$methodBeta, numMoney = input$amountMoney, numberOfStock = input$numStock, amountOfRisk = input$beta, fees = input$fees, rangeReturn = input$rangeReturn, rsi = c(0, input$riskRSI), methodOfInvestment = input$methodOfInvestment)
+      rv$portfolio <- createPortfolio(input = rv$stocks, inputBeta = rv$betalist, methodBeta = input$methodBeta, numMoney = input$amountMoney, numberOfStock = input$numStock, amountOfRisk = input$beta, fees = input$fees, rangeReturn = input$rangeReturn, rsi = c(0, input$riskRSI), methodOfInvestment = input$methodOfInvestment, pBeta = input$pBeta)
       rv$portfolioBeta <- portfolioBeta
       # Save settings
       rv$settings <- c(input$beta, input$methodBeta, input$rangeReturn, input$fees, input$riskRSI, input$methodOfInvestment, input$pBeta)

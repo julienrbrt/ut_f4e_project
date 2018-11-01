@@ -127,7 +127,7 @@ calculateRSI <- function(input, timeFrame = 14) {
 
 # Create Portfolio
 # Warning the input of that function should be the return of getAllStocks
-createPortfolio <- function(input, inputBeta, methodBeta, numMoney, numberOfStock, amountOfRisk, fees, rangeReturn = "m", rsi, methodOfInvestment) {
+createPortfolio <- function(input, inputBeta, methodBeta, numMoney, numberOfStock, amountOfRisk, fees, rangeReturn = "m", rsi, methodOfInvestment, pBeta) {
 
   if (identical(rangeReturn, "d")) {
     cReturn <- dailyReturn
@@ -260,7 +260,7 @@ updatePortfolio <- function(portfolio, market, balance, methodOfInvestment, sett
   stocks[[2]][worstStockName] <- list(NULL)
   
   # Create new portfolio using money remaining
-  newPortfolio <- createPortfolio(input = stocks, inputBeta = as.numeric(betalist), methodBeta = settings["methodBeta"], numMoney = as.numeric(balance["Money Left"]), numberOfStock = as.numeric(reInvestNb), amountOfRisk = as.numeric(settings["beta"]), fees = as.numeric(settings["fees"]), rangeReturn = settings["RangeReturn"], rsi = c(0, as.numeric(settings["RSI"])), methodOfInvestment = settings["methodOfInvestment"])
+  newPortfolio <- createPortfolio(input = stocks, inputBeta = as.numeric(betalist), methodBeta = settings["methodBeta"], numMoney = as.numeric(balance["Money Left"]), numberOfStock = as.numeric(reInvestNb), amountOfRisk = as.numeric(settings["beta"]), fees = as.numeric(settings["fees"]), rangeReturn = settings["RangeReturn"], rsi = c(0, as.numeric(settings["RSI"])), methodOfInvestment = settings["methodOfInvestment"], pBeta = settings["pBeta"])
   
   # Update balance
   balance["Money Invested"] <- balance["Money Invested"] + crossprod(as.numeric(newPortfolio$Price), as.numeric(newPortfolio$Amount)) + reInvest * as.numeric(settings["fees"])
