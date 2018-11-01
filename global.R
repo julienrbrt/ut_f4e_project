@@ -161,12 +161,19 @@ createPortfolio <- function(input, inputBeta, methodBeta, numMoney, numberOfStoc
   }
   names(portfolio) <- names(input[[2]])
   
-  # Filter remaining stocks on beta choosen and RSI
-  if (identical(methodBeta, "min")) {
-    decide <- portfolioBeta >= amountOfRisk & portfolioRSI <= rsi[2] & portfolioRSI >= rsi[1]
+  # Calculate portfolio beta instead of per stocks
+  if (pBeta != 0) {
+    # RSI thus ignored
+    decide <- portfolioBeta <= pBeta + (pBeta * 10)/100 || portfolioBeta >= pBeta - (pBeta * 10)/100
   } else {
-    decide <- portfolioBeta <= amountOfRisk & portfolioRSI <= rsi[2] & portfolioRSI >= rsi[1]
+    # Filter remaining stocks on beta choosen and RSI
+    if (identical(methodBeta, "min")) {
+      decide <- portfolioBeta >= amountOfRisk & portfolioRSI <= rsi[2] & portfolioRSI >= rsi[1]
+    } else {
+      decide <- portfolioBeta <= amountOfRisk & portfolioRSI <= rsi[2] & portfolioRSI >= rsi[1]
+    }
   }
+  
   portfolio <- portfolio[decide]
   portfolioReturn <- portfolioReturn[decide]
   portfolioBeta <- portfolioBeta[decide]
@@ -217,8 +224,13 @@ createPortfolio <- function(input, inputBeta, methodBeta, numMoney, numberOfStoc
   portfolio$Amount <- as.numeric(portfolio$Amount)
   
   # Generate portfolio beta
-  portfolioBeta <<- mean(portfolioBeta * portfolio$Amount/sum(portfolio$Amount))
-  
+  if (pBeta != 0) {
+    portfolioBeta <<- pBeta    
+  } else {
+    portfolioBeta <<- mean(portfolioBeta * portfolio$Amount/sum(portfolio$Amount))
+    
+  }
+
   return(portfolio)
 }
 
