@@ -216,6 +216,9 @@ createPortfolio <- function(input, inputBeta, methodBeta, numMoney, numberOfStoc
   portfolio$Current.Price <- as.numeric(portfolio$Current.Price)
   portfolio$Amount <- as.numeric(portfolio$Amount)
   
+  # Generate portfolio beta
+  portfolioBeta <<- mean(portfolioBeta * portfolio$Amount)
+  
   return(portfolio)
 }
 
@@ -282,39 +285,4 @@ updateCurrentPortfolioPrices <- function(portfolio) {
 # List the stocks name of your portfolio
 listStockNames <- function(portfolio) {
   return(as.character(portfolio$Name))
-}
-
-# Get Trends of Stocks via Google Trends - NOT IMPLEMENTED
-getTrends <- function(portfolio) {
-  
-}
-
-# Predict stock value - NOT IMPLEMENTED
-getPrediction <- function(input) {
-
-  if (!require(mice)) install.packages("mice")
-  if (!require(caTools)) install.packages("caTools")
-  if (!require(pROC)) install.packages("pROC")
-  library(caTools)
-  library(pROC)
-  library(mice)
-
-  merged <- input[[2]][[1]]
-
-  for (i in 2:length(input[[2]])) {
-    merged <- merge(merged, input[[2]][[i]], by = "Date", all = TRUE)
-  }
-
-  # Subset data into training and testing set
-  set.seed(69)
-
-  # Take 75% of the data in the training set
-  split <- sample(nrow(merged), floor(0.75 * nrow(merged)))
-  train <- merged[split,]
-  test <- merged[-split,]
-
-  # Use ARIMA prediction for Stocks
-  # TO IMPLEMENT
-
-  return(FALSE)
 }

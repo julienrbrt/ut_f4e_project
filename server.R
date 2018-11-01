@@ -2,11 +2,10 @@
 # BIT Group 1
 # Application dashboard managing your portfolio
 
-library(shiny)
-
 source("dependencies.R")
+library(shiny)
 source("global.R")
-# source("preRun.R")
+#source("preRun.R")
 
 # Server side of ProfitMaker
 server <- function(input, output, session) {
@@ -47,6 +46,7 @@ server <- function(input, output, session) {
       }
       incProgress(2/10, detail = "Preparing your portfolio")
       # rv$portfolio <- createPortfolio(input = rv$stocks, inputBeta = rv$betalist, methodBeta = input$methodBeta, numMoney = input$amountMoney, numberOfStock = input$numStock, amountOfRisk = input$beta, fees = input$fees, rangeReturn = input$rangeReturn, rsi = c(0, input$riskRSI), methodOfInvestment = input$methodOfInvestment)
+      rv$portfolioBeta <- portfolioBeta
       # Save settings
       rv$settings <- c(input$beta, input$methodBeta, input$rangeReturn, input$fees, input$riskRSI, input$methodOfInvestment)
       # Send message about money invested
@@ -57,6 +57,16 @@ server <- function(input, output, session) {
             icon = icon("life-ring"),
             status = "success"
           )
+        )
+      })
+      # Inform use about beta of his portfolio
+      output$messageMenu <- renderMenu({
+        dropdownMenu(type = "messages", 
+                     notificationItem(
+                       text = paste0("You portfolio beta's is ", rv$portfolioBeta),
+                       icon = icon("warning"),
+                       status = "success"
+                     )
         )
       })
       # Update stocks name for chart
