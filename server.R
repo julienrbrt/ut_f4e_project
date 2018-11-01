@@ -46,7 +46,7 @@ server <- function(input, output, session) {
         rv$stocks[[2]] <- calculateRSI(rv$stocks[[2]])
       }
       incProgress(2/10, detail = "Preparing your portfolio")
-      rv$portfolio <- createPortfolio(input = rv$stocks, inputBeta = rv$betalist, methodBeta = input$methodBeta, numMoney = input$amountMoney, numberOfStock = input$numStock, amountOfRisk = input$beta, fees = input$fees, rangeReturn = input$rangeReturn, rsi = c(0, input$riskRSI), methodOfInvestment = input$methodOfInvestment)
+      # rv$portfolio <- createPortfolio(input = rv$stocks, inputBeta = rv$betalist, methodBeta = input$methodBeta, numMoney = input$amountMoney, numberOfStock = input$numStock, amountOfRisk = input$beta, fees = input$fees, rangeReturn = input$rangeReturn, rsi = c(0, input$riskRSI), methodOfInvestment = input$methodOfInvestment)
       # Save settings
       rv$settings <- c(input$beta, input$methodBeta, input$rangeReturn, input$fees, input$riskRSI, input$methodOfInvestment)
       # Send message about money invested
@@ -70,8 +70,8 @@ server <- function(input, output, session) {
     candleChart(rv$stocks[[1]][[input$listStock]], name = paste0("Historical values of ", input$listStock), theme = "white", subset = paste0("last ", input$performStock, " months"), type = 'candles')
     # Add Moving average
     addSMA(n = 10, on = 1, with.col = Cl, overlay = TRUE, col = "brown")
-    # Add Relative Strengh Index
-    # addRSI(n = 14, wilder = TRUE)
+    # Add 14 days Relative Strengh Index
+    addRSI(n = 14, wilder = TRUE)
   })
 
   # Show current portfolio
@@ -80,7 +80,7 @@ server <- function(input, output, session) {
   )
 
   output$repartitionChart <- renderPlot(
-    barplot(as.numeric(rv$portfolio$Amount), names = rv$portfolio$Name, xlab = "Company names", ylab = "Amount of stocks", col = "lightblue")
+    barplot(as.numeric(rv$portfolio$Amount), names = rv$portfolio$Name, xlab = "Positions", ylab = "Amount of Stocks", col = "lightblue")
   )
   
   # Show balance info
@@ -130,9 +130,11 @@ server <- function(input, output, session) {
   }, ignoreInit = TRUE)
   
   # Update the current stocks price with the value set by the user
- observe({
-
-    invalidateLater(as.numeric(input$interval) * 1000, session)
+  paused <- TRUE
+  if (paused == FALSE) {
+  refresh <- observe({
+   
+      invalidateLater(as.numeric(input$interval) * 1000, session)
     
     # Launch that only once
     once <- 0
@@ -148,6 +150,7 @@ server <- function(input, output, session) {
       incProgress(1/2, detail = "Done")
     })
   })
+}
   
   # Download positions of portolio
   output$download <- downloadHandler(
@@ -159,38 +162,50 @@ server <- function(input, output, session) {
     }
   )
   
-  # Pause the investment - i.e Stop to buy / sell stocks - Not Implemented
+  # Pause the investment - i.e Stop to buy / sell stocks
   observeEvent(input$pause, {
     
-    # Send message about the stock sold and the new balance
-    output$messageMenu <- renderMenu({
-      dropdownMenu(type = "messages", 
-        notificationItem(
-          text = "Profit Maker will now stop trading for you.",
-          icon = icon("info"),
-          status = "success"
-       )
-      )
-    })
-    
+    if (paused == FALSE) {
+      paused <<- TRUE
+      withProgress(message = "Pausing investement", value = 1/2, {
+        Sys.sleep(3)
+        incProgress(1/2, detail = "Done")
+      })
+    } else {
+      withProgress(message = "Re-starting investement", value = 1/2, {
+        Sys.sleep(3)
+        incProgress(1/2, detail = "Done")
+      })
+      paused <<- FALSE
+    }
   })
   
-  # Stop the investment - i.e Sell every stocks - Not Implemented
+  # Stop the investment - i.e Sell every stocks
   observeEvent(input$stop, {
     
-    # rv$balance["Money Left"] <- rv$balance["Money Left"] + rv$balance["Money Invested"]
-    # rv$balance["Money Invested"] <- 0
+    rv$balance["Money Left"] <- rv$balance["Money Left"] + sum(rv$portfolio$Current.Price * rv$portfolio$Amount)
+    rv$balance["Money Invested"] <- 0
+    
+    # Do not refresh anymore
+    refresh$destroy()
 
+    withProgress(message = "Stop investement", value = 1/4, {
+      Sys.sleep(3)
+      incProgress(1/3, detail = "Selling stocks")
+      Sys.sleep(3)
+      incProgress(1/2, detail = "Done")
+    })
+    
     # Send message about the stock sold and the new balance
     output$messageMenu <- renderMenu({
       dropdownMenu(type = "messages", 
         notificationItem(
-          text = paste0("All your positions have been sold, you have now", rv$balance["Money Left"], "€/$"),
+          text = paste0("You have now ", rv$balance["Money Left"], "€/$"),
           icon = icon("warning"),
           status = "success"
         )
       )
     })
     
-  })
+  }, once = TRUE)
 }

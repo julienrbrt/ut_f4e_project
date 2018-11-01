@@ -9,8 +9,8 @@ library(data.table)
 library(stringr)
 library(tidyr)
 
-# Import datasets of value from Euronext (15/10/2017)
-euronext <- fread("preprocess/Euronext_Equities_EU_2017-10-15.csv")
+# Import datasets of value from Euronext (30/09/2017)
+euronext <- fread("preprocess/Euronext_Equities_EU_2018-09-30.csv")
 
 # Keep EUR values only
 euronext <- subset(euronext, euronext$`Trading Currency` == "EUR")

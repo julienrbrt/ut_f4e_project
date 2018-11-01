@@ -5,7 +5,7 @@
 library(shiny)
 
 # UI side of ProfitMaker
-ui <- dashboardPage(skin = "yellow",
+ui <- dashboardPage(skin = "blue",
   
   dashboardHeader(title = "Profit Maker",
     dropdownMenuOutput("messageMenu")
@@ -14,9 +14,6 @@ ui <- dashboardPage(skin = "yellow",
   dashboardSidebar(disable = TRUE),
   
   dashboardBody(
-    shiny::tags$head(
-      shiny::tags$link(rel = "stylesheet", type = "text/css", href = "stylesheet.css")
-    ),
     fluidRow(
       column(width = 9,
         box(width = NULL, solidHeader = TRUE, status = "warning",
@@ -76,7 +73,7 @@ ui <- dashboardPage(skin = "yellow",
           # Disgusting but fast way to sec time - To fix someday
           selectInput("interval", "Update Current Stock Price", choices = c("5 minutes" = 300, "15 minutes" = 900, "30 minutes" = 1800, "3 hours" = 10800), selected = "1800"),
           selectInput("investmentUpdate", "Update Investment", choices = c("3 hours" = 10800, "12 hours" = 43200, "24 hours" = 86400, "3 days" = 259200, "7 days" = 604800, "14 days" = 1209600, "1 month" = 2592000), selected = "43200"),
-          selectInput("methodOfSelection", "Method of selection", choices = c("by RSI" = "rsi", "by Performance" = "perf"), selected = "rsi"),
+          selectInput("methodOfSelection", "Method of selection", choices = c("by RSI" = "rsi", "by Performance" = "perf"), selected = "perf"),
           actionButton("pause", "Pause"),
           actionButton("stop", "Stop"),
           p(class = "text-muted",

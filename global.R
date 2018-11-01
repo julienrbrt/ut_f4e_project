@@ -2,7 +2,7 @@
 # BIT Group 1
 # Calculations for Stocks
 
-# Disabke warnings of Yahoo! Finance
+# Disable warnings of Yahoo! Finance
 options("getSymbols.yahoo.warning" = FALSE)
 
 # Get All Stocks
